@@ -1,25 +1,40 @@
-function numIslands(grid) {
-  if (!grid || grid.length === 0) return 0;
-  const m = grid.length;
-  const n = grid[0].length;
-  let islands = 0;
-  for (let i = 0; i < m; i++) {
-    for (let j = 0; j < n; j++) {
-      if (grid[i][j] === "1") {
-        islands++;
-        dfs(grid, i, j);
+const strandSort = (arr) => {
+  const extract = (arr, x) => {
+    const extracted = [];
+    let i = 0;
+    while (i < arr.length) {
+      if (x.includes(arr[i])) {
+        extracted.push(arr.splice(i, 1)[0]);
+      } else {
+        i++;
       }
     }
+    return extracted;
+  };
+  const merge = (a, b) => {
+    const merged = [];
+    let i = 0;
+    let j = 0;
+    while (i < a.length && j < b.length) {
+      if (a[i] < b[j]) {
+        merged.push(a[i]);
+        i++;
+      } else {
+        merged.push(b[j]);
+        j++;
+      }
+    }
+    return merged.concat(i < a.length ? a.slice(i) : b.slice(j));
+  };
+  let sorted = [];
+  while (arr.length > 0) {
+    let sublist = [arr.shift()];
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i] > sublist[sublist.length - 1]) {
+        sublist.push(arr.splice(i, 1)[0]);
+      }
+    }
+    sorted = merge(sorted, sublist);
   }
-  return islands;
-}
-function dfs(grid, i, j) {
-  const m = grid.length;
-  const n = grid[0].length;
-  if (i < 0 || j < 0 || i >= m || j >= n || grid[i][j] === "0") return;
-  grid[i][j] = "0";
-  dfs(grid, i + 1, j);
-  dfs(grid, i - 1, j);
-  dfs(grid, i, j + 1);
-  dfs(grid, i, j - 1);
-}
+  return sorted;
+};
